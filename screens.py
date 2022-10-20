@@ -188,7 +188,7 @@ while True:
                             name = sg.popup_get_text("Enter Sport Name")
                             services.setSport(name,mydb)
                         if event == "Create Player":
-                            name = sg.popup_get_text("Enter Sport Name")
+                            name = sg.popup_get_text("Enter Player Name")
                             gender = sg.popup_get_text("Enter Player Gender")
                             age = sg.popup_get_text("Enter Player age")
                             email = sg.popup_get_text("Enter Player Email")
