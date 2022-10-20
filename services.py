@@ -249,6 +249,37 @@ def getTournament(tournamentId,db):
     tournament = cursor.fetchone()
     return tournament
 
+def getPlayerTournaments(playerId, db):
+    sql = "SELECT tournament_team_mapping.tournamentId, tournaments.tournamentName FROM player_team_mapping, tournament_team_mapping, tournaments where player_team_mapping.teamId = tournament_team_mapping.teamId and tournament_team_mapping.tournamentId = tournaments.tournamentId and player_team_mapping.playerId = %s"
+    values = [playerId]
+    cursor = db.cursor()
+    cursor.execute(sql, values)
+    tournaments = cursor.fetchall()
+    return tournaments
+
+
+def getJoinableTournaments(playerId, db):
+    sql = "SELECT tournaments.tournamentId,tournaments.tournamentName from player_team_mapping, teams, tournaments where player_team_mapping.teamId= teams.teamId and playerId = %s and teams.sportId = tournaments.sportId"
+    values = [playerId]
+    cursor = db.cursor()
+    cursor.execute(sql,values)
+    tournaments = cursor.fetchall()
+    return tournaments
+
+def assignPlayerTournament(playerId, tournamentId,db):
+    sql = "INSERT into tournament_team_mapping (tournamentId, teamId) values (%s, (SELECT MIN(teams.teamId) from player_team_mapping, teams, tournaments where player_team_mapping.teamId= teams.teamId and playerId = %s and teams.sportId = tournaments.sportId))"
+    values = [tournamentId, playerId]
+    cursor = db.cursor()
+    cursor.execute(sql, values)
+    db.commit()
+
+def removePlayerTournament(playerId, tournamentId, db):
+    sql = "DELETE from tournament_team_mapping where tournamentId = %s and teamId = (SELECT MIN(teams.teamId) from player_team_mapping, teams, tournaments where player_team_mapping.teamId= teams.teamId and playerId = %s and teams.sportId = tournaments.sportId)"
+    values = [tournamentId,playerId]
+    cursor = db.cursor()
+    cursor.execute(sql,values)
+    db.commit()
+
 #function to add team to tournament
 def assignTournament(teamId,tournamentId,db):
     sql = "INSERT INTO tournament_team_mapping (teamId,tournamentId) VALUES (%s,%s)"
@@ -277,7 +308,6 @@ def authenticate(username,password,db):
           return True,"user",user[0]
       else:
         return False,"invalid password"
-
 
 
 # setPlayer("XYZ","M","25","name@domain.com","password",mydb)
