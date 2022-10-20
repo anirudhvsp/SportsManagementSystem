@@ -162,7 +162,7 @@ while True:
                         print('logged in as admin')
                         window.close()
                         print(auth)
-                        window = sg.Window('Sports Management System', get_player_dashboard(player[1],player[2],player[3],player[4],sports_list))
+                        window = sg.Window('Sports Management System', get_admin_dashboard())
                         event, values = window.read()
                         print(event)
                         if event == sg.WIN_CLOSED:
